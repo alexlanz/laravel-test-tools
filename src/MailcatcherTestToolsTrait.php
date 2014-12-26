@@ -5,18 +5,25 @@ use GuzzleHttp\Client;
 trait MailcatcherTestToolsTrait {
 
     protected $mailcatcher;
-    protected $mailcatcher_base_url;
 
-    protected function setupMailcatcherTools()
+    protected function setUpMailcatcherTools()
     {
-        $config = array(
-            'base_url' => $this->mailcatcher_base_url
-        );
-
-        $this->mailcatcher = new Client($config);
+        $this->setUpMailcatcher();
+        $this->clearMails();
     }
 
-    public function clearMails()
+    protected function setUpMailcatcher()
+    {
+        $config = $this->app->make('config');
+
+        $mailcatcherConfig = array(
+            'base_url' => $config['tests']['mailcatcher']['url'] . ':' . $config['tests']['mailcatcher']['port']
+        );
+
+        $this->mailcatcher = new Client($mailcatcherConfig);
+    }
+
+    protected function clearMails()
     {
         $this->mailcatcher->delete('/messages');
     }
@@ -59,7 +66,7 @@ trait MailcatcherTestToolsTrait {
      * @param $regex
      * @return mixed
      */
-    public function grabMatchesFromLastEmail($regex)
+    protected function grabMatchesFromLastEmail($regex)
     {
         $email = $this->lastMessage();
         $matches = $this->grabMatchesFromEmail($email, $regex);
@@ -72,7 +79,7 @@ trait MailcatcherTestToolsTrait {
      * @param $regex
      * @return mixed
      */
-    public function grabFromLastEmail($regex)
+    protected function grabFromLastEmail($regex)
     {
         $matches = $this->grabMatchesFromLastEmail($regex);
         return $matches[0];
@@ -85,7 +92,7 @@ trait MailcatcherTestToolsTrait {
      * @param $regex
      * @return mixed
      */
-    public function grabMatchesFromLastEmailTo($address, $regex)
+    protected function grabMatchesFromLastEmailTo($address, $regex)
     {
         $email = $this->lastMessageFrom($address);
         $matches = $this->grabMatchesFromEmail($email, $regex);

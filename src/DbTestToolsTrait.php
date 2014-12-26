@@ -5,16 +5,13 @@ trait DbTestToolsTrait {
 
     protected $db;
 
-    public function setUpDatabaseTools()
+    protected function setUpDatabaseTools()
     {
         $this->db = $this->app->make('db');
         $this->db->beginTransaction();
-
-        $this->setupMailcatcher();
-        $this->clearMails();
     }
 
-    public function tearDownDatabaseTools()
+    protected function tearDownDatabaseTools()
     {
         $this->db->rollback();
     }
