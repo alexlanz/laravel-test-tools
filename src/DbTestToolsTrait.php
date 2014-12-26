@@ -21,13 +21,13 @@ trait DbTestToolsTrait {
     protected function checkRecordInDatabase($table, $criteria)
     {
         $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
-        $this->assertNotNull($query->get());
+        $this->assertCount(1, $query->get());
     }
 
     protected function checkRecordNotInDatabase($table, $criteria)
     {
         $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
-        $this->assertNotNull($query->get());
+        $this->assertCount(0, $query->get());
     }
 
     private function createQueryForCheckOfRecordInDatabase($table, $criteria)
