@@ -34,6 +34,18 @@ trait DbTestToolsTrait {
         $this->assertCount($count, $query->get());
     }
 
+    protected function getRecordsInDatabase($table, array $criteria)
+    {
+        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
+        return $query->get();
+    }
+
+    protected function getFirstRecordInDatabase($table, array $criteria)
+    {
+        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
+        return $query->first();
+    }
+
     private function createQueryForCheckOfRecordInDatabase($table, $criteria)
     {
         $query = $this->db->table($table);
