@@ -1,7 +1,7 @@
 <?php namespace Tests\Tools;
 
 
-trait DbTestToolsTrait {
+trait DatabaseTestToolsTrait {
 
     protected $db;
 
