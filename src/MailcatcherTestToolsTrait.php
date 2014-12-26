@@ -6,10 +6,11 @@ trait MailcatcherTestToolsTrait {
 
     protected $mailcatcher;
 
+
     protected function setUpMailcatcherTools()
     {
         $this->setUpMailcatcher();
-        $this->clearMails();
+        $this->clearEmails();
     }
 
     protected function setUpMailcatcher()
@@ -23,9 +24,88 @@ trait MailcatcherTestToolsTrait {
         $this->mailcatcher = new Client($mailcatcherConfig);
     }
 
-    protected function clearMails()
+
+    /**
+     * Clear all emails from Mailcatcher.
+     */
+    public function clearEmails()
     {
         $this->mailcatcher->delete('/messages');
+    }
+
+    /**
+     * Look for a string in the most recent email.
+     *
+     * @param $expected
+     */
+    public function seeInLastEmail($expected)
+    {
+        $email = $this->lastMessage();
+        $this->seeInEmail($email, $expected);
+    }
+
+    /**
+     * Look for a string in the most recent email sent to a specific email address.
+     *
+     * @param $address
+     * @param $expected
+     */
+    public function seeInLastEmailTo($address, $expected)
+    {
+        $email = $this->lastMessageFrom($address);
+        $this->seeInEmail($email, $expected);
+    }
+
+    /**
+     * Look for a regex in the email source and return it's matches.
+     *
+     * @param $regex
+     * @return mixed
+     */
+    public function grabMatchesFromLastEmail($regex)
+    {
+        $email = $this->lastMessage();
+        $matches = $this->grabMatchesFromEmail($email, $regex);
+        return $matches;
+    }
+
+    /**
+     * Look for a regex in the email source and return it.
+     *
+     * @param $regex
+     * @return mixed
+     */
+    public function grabFromLastEmail($regex)
+    {
+        $matches = $this->grabMatchesFromLastEmail($regex);
+        return $matches[0];
+    }
+
+    /**
+     * Look for a regex in most recent email source sent to specific email address and return it's matches.
+     *
+     * @param $address
+     * @param $regex
+     * @return mixed
+     */
+    public function grabMatchesFromLastEmailTo($address, $regex)
+    {
+        $email = $this->lastMessageFrom($address);
+        $matches = $this->grabMatchesFromEmail($email, $regex);
+        return $matches;
+    }
+
+    /**
+     * Look for a regex in most recent email source sent to a specific email address and return it.
+     *
+     * @param $address
+     * @param $regex
+     * @return mixed
+     */
+    public function grabFromLastEmailTo($address, $regex)
+    {
+        $matches = $this->grabMatchesFromLastEmailTo($address, $regex);
+        return $matches[0];
     }
 
     /**
@@ -61,70 +141,6 @@ trait MailcatcherTestToolsTrait {
     }
 
     /**
-     * Look for a regex in the email source and return it's matches.
-     *
-     * @param $regex
-     * @return mixed
-     */
-    protected function grabMatchesFromLastEmail($regex)
-    {
-        $email = $this->lastMessage();
-        $matches = $this->grabMatchesFromEmail($email, $regex);
-        return $matches;
-    }
-
-    /**
-     * Look for a regex in the email source and return it.
-     *
-     * @param $regex
-     * @return mixed
-     */
-    protected function grabFromLastEmail($regex)
-    {
-        $matches = $this->grabMatchesFromLastEmail($regex);
-        return $matches[0];
-    }
-
-    /**
-     * Look for a regex in most recent email source sent to specific email address and return it's matches.
-     *
-     * @param $address
-     * @param $regex
-     * @return mixed
-     */
-    protected function grabMatchesFromLastEmailTo($address, $regex)
-    {
-        $email = $this->lastMessageFrom($address);
-        $matches = $this->grabMatchesFromEmail($email, $regex);
-        return $matches;
-    }
-
-    /**
-     * Look for a regex in most recent email source sent to a specific email address and return it.
-     *
-     * @param $address
-     * @param $regex
-     * @return mixed
-     */
-    public function grabFromLastEmailTo($address, $regex)
-    {
-        $matches = $this->grabMatchesFromLastEmailTo($address, $regex);
-        return $matches[0];
-    }
-
-    /**
-     * Returns the email's object given the Mailcatcher id
-     *
-     * @param $id
-     * @return mixed
-     */
-    protected function emailFromId($id)
-    {
-        $response = $this->mailcatcher->get("/messages/{$id}.json");
-        return $response->json();
-    }
-
-    /**
      * Get the most recent email sent to the given email address.
      *
      * @param $address
@@ -141,6 +157,29 @@ trait MailcatcherTestToolsTrait {
             }
         }
         $this->fail("No messages sent to {$address}");
+    }
+
+    /**
+     * Returns the email's object given the Mailcatcher id
+     *
+     * @param $id
+     * @return mixed
+     */
+    protected function emailFromId($id)
+    {
+        $response = $this->mailcatcher->get("/messages/{$id}.json");
+        return $response->json();
+    }
+
+    /**
+     * Look for a string in an email source.
+     *
+     * @param $email
+     * @param $expected
+     */
+    protected function seeInEmail($email, $expected)
+    {
+        $this->assertContains($expected, $email['source'], "Email Contains");
     }
 
     /**
