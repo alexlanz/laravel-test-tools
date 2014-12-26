@@ -1,4 +1,4 @@
-<?php namespace Tests\Tools;
+<?php namespace Krumer\Test\Tools;
 
 use GuzzleHttp\Client;
 

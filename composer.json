@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tests\\Tools\\": "src/"
+            "Krumer\\Test\\Tools\\": "src/"
         }
     }
 }
