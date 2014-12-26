@@ -18,16 +18,20 @@ trait DbTestToolsTrait {
     }
 
 
-    protected function checkRecordInDatabase($table, $criteria)
+    protected function checkRecordInDatabase($table, array $criteria)
     {
-        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
-        $this->assertCount(1, $query->get());
+        $this->countRecordInDatabase(1, $table, $criteria);
     }
 
-    protected function checkRecordNotInDatabase($table, $criteria)
+    protected function checkRecordNotInDatabase($table, array $criteria)
+    {
+        $this->countRecordInDatabase(0, $table, $criteria);
+    }
+
+    protected function countRecordInDatabase($count, $table, array $criteria)
     {
         $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
-        $this->assertCount(0, $query->get());
+        $this->assertCount($count, $query->get());
     }
 
     private function createQueryForCheckOfRecordInDatabase($table, $criteria)
