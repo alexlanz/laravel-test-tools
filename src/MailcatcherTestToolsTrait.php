@@ -1,5 +1,6 @@
 <?php namespace Tests\Tools;
 
+use GuzzleHttp\Client;
 
 trait MailcatcherTestToolsTrait {
 
