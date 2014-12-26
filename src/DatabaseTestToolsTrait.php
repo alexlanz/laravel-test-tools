@@ -1,6 +1,5 @@
 <?php namespace Tests\Tools;
 
-
 trait DatabaseTestToolsTrait {
 
     protected $db;
