@@ -1,0 +1,21 @@
+{
+    "name": "alexlanz/laravel-test-tools",
+    "description": "Laravel Test Tools",
+    "keywords": ["Laravel", "Test", "Tool"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Lanz",
+            "email": "alex@krumer.it"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "~5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tests\\Tools\\": "src/"
+        }
+    }
+}
