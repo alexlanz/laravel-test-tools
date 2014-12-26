@@ -13,6 +13,11 @@ trait MailcatcherTestToolsTrait {
         $this->clearEmails();
     }
 
+    protected function tearDownMailcatcherTools()
+    {
+
+    }
+
     protected function setUpMailcatcher()
     {
         $config = $this->app->make('config');
