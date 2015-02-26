@@ -40,7 +40,7 @@ trait ApiTestToolsTrait {
 
         $content = $response->getContent();
 
-        return json_decode($content);
+        return json_decode($content, true);
     }
 
 }
