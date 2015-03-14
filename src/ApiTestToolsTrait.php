@@ -2,6 +2,14 @@
 
 trait ApiTestToolsTrait {
 
+    protected $content;
+
+    protected $info;
+
+    protected $data;
+
+    protected $error;
+
     /**
      * Call the given URI as a Api/Ajax call and return the Response.
      *
@@ -19,28 +27,40 @@ trait ApiTestToolsTrait {
         // Set headers for a valid ajax request
         $server['HTTP_X-Requested-With'] = 'XMLHttpRequest';
 
-        return $this->call($method, $uri, $parameters, $cookies, $files, $server, $content);
+        // Call
+        $response = $this->call($method, $uri, $parameters, $cookies, $files, $server, $content);
+
+        // Set variables
+        $this->content = $response->getContent();
+        $decodedContent = $this->decodeJsonData($this->content);
+
+        if (array_key_exists('info', $decodedContent))
+        {
+            $this->info = $decodedContent['info'];
+        }
+        
+        if (array_key_exists('data', $decodedContent))
+        {
+            $this->data = $decodedContent['data'];
+        }
+
+        if (array_key_exists('error', $decodedContent))
+        {
+            $this->error = $decodedContent['error'];
+        }
+
+        return $response;
     }
 
     /**
-     * Call the given URI as a Api/Ajax call and return the json decoded content.
+     * Returns the retrieved content json encoded.
      *
-     * @param string $method
-     * @param string $uri
-     * @param array $parameters
-     * @param array $cookies
-     * @param array $files
-     * @param array $server
-     * @param null $content
-     * @return \Illuminate\Http\Response
+     * @param string
+     * @return mixed
      */
-    public function callApiAndReturnJsonDecodedContent($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    public function decodeJsonData($data)
     {
-        $response = $this->callApi($method, $uri, $parameters, $cookies, $files, $server, $content);
-
-        $content = $response->getContent();
-
-        return json_decode($content, true);
+        return json_decode($data, true);
     }
 
 }
