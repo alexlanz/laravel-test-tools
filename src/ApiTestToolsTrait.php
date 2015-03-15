@@ -34,19 +34,22 @@ trait ApiTestToolsTrait {
         $this->content = $response->getContent();
         $decodedContent = $this->decodeJsonData($this->content);
 
-        if (array_key_exists('info', $decodedContent))
+        if (is_array($decodedContent))
         {
-            $this->info = $decodedContent['info'];
-        }
-        
-        if (array_key_exists('data', $decodedContent))
-        {
-            $this->data = $decodedContent['data'];
-        }
+            if (array_key_exists('info', $decodedContent))
+            {
+                $this->info = $decodedContent['info'];
+            }
+            
+            if (array_key_exists('data', $decodedContent))
+            {
+                $this->data = $decodedContent['data'];
+            }
 
-        if (array_key_exists('error', $decodedContent))
-        {
-            $this->error = $decodedContent['error'];
+            if (array_key_exists('error', $decodedContent))
+            {
+                $this->error = $decodedContent['error'];
+            }
         }
 
         return $response;
