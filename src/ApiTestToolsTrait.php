@@ -45,7 +45,7 @@ trait ApiTestToolsTrait {
     {
         $this->content = $content;
 
-        $this->data = $this->getDecodecJsonData($content);
+        $this->data = json_decode($content, true);
 
         if (is_array($this->data))
         {
@@ -59,17 +59,6 @@ trait ApiTestToolsTrait {
                 $this->error = $this->data['error'];
             }
         }
-    }
-
-    /**
-     * Returns the retrieved content json encoded.
-     *
-     * @param string
-     * @return mixed
-     */
-    protected function getDecodeJsonData($data)
-    {
-        return json_decode($data, true);
     }
 
 }
