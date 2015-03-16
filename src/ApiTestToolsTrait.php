@@ -31,28 +31,34 @@ trait ApiTestToolsTrait {
         $response = $this->call($method, $uri, $parameters, $cookies, $files, $server, $content);
 
         // Set variables
-        $this->content = $response->getContent();
-        $decodedContent = $this->decodeJsonData($this->content);
-
-        if (is_array($decodedContent))
-        {
-            if (array_key_exists('info', $decodedContent))
-            {
-                $this->info = $decodedContent['info'];
-            }
-            
-            if (array_key_exists('data', $decodedContent))
-            {
-                $this->data = $decodedContent['data'];
-            }
-
-            if (array_key_exists('error', $decodedContent))
-            {
-                $this->error = $decodedContent['error'];
-            }
-        }
+        $this->setupApiVariables($response->getContent());
 
         return $response;
+    }
+
+    /**
+     * Sets all available api variables based on the given content.
+     *
+     * @param string
+     */
+    protected function setupApiVariables($content)
+    {
+        $this->content = $content;
+
+        $this->data = $this->getDecodecJsonData($content);
+
+        if (is_array($this->data))
+        {
+            if (array_key_exists('info', $this->data))
+            {
+                $this->info = $this->data['info'];
+            }
+
+            if (array_key_exists('error', $this->data))
+            {
+                $this->error = $this->data['error'];
+            }
+        }
     }
 
     /**
@@ -61,7 +67,7 @@ trait ApiTestToolsTrait {
      * @param string
      * @return mixed
      */
-    public function decodeJsonData($data)
+    protected function getDecodeJsonData($data)
     {
         return json_decode($data, true);
     }
