@@ -2,6 +2,10 @@
 
 trait ApiTestToolsTrait {
 
+    protected $apiMethod;
+
+    protected $apiUrl;
+
     protected $content;
 
     protected $info;
@@ -37,6 +41,17 @@ trait ApiTestToolsTrait {
     }
 
     /**
+     * Call the api with the predefined method and url.
+     *
+     * @param array $parameters
+     * @return \Illuminate\Http\Response
+     */
+    protected function runApiCall($parameters = [])
+    {
+        return $this->callApi($this->apiMethod, $this->apiUrl, $parameters);
+    }
+
+    /**
      * Sets all available api variables based on the given content.
      *
      * @param string
@@ -59,6 +74,46 @@ trait ApiTestToolsTrait {
                 $this->error = $this->data['error'];
             }
         }
+    }
+
+    /**
+     * Set the url of the API.
+     *
+     * @param $apiUrl
+     */
+    public function setApiUrl($apiUrl)
+    {
+        $this->apiUrl = $apiUrl;
+    }
+
+    /**
+     * Return the url of the API.
+     *
+     * @return mixed
+     */
+    public function getApiUrl()
+    {
+        return $this->apiUrl;
+    }
+
+    /**
+     * Set the method of the API.
+     *
+     * @param $apiMethod
+     */
+    protected function setApiMethod($apiMethod)
+    {
+        $this->apiMethod = $apiMethod;
+    }
+
+    /**
+     * Return the method of the API.
+     *
+     * @return mixed
+     */
+    protected function getApiMethod()
+    {
+        return $this->apiMethod;
     }
 
 }
