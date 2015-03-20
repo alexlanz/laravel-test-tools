@@ -116,4 +116,48 @@ trait ApiTestToolsTrait {
         return $this->apiMethod;
     }
 
+    /**
+     * Call the api and assert that the response contains a validation error with the given validation errors.
+     *
+     * @param $parameters
+     * @param $errors
+     */
+    protected function assertApiValidationFailed($parameters, $errors)
+    {
+        $this->runApiCall($parameters);
+
+        $this->assertResponseStatus(400);
+        $this->assertEquals('Validation failed', $this->error['message']);
+
+        foreach ($errors as $field => $message)
+        {
+            $this->assertEquals($message, $this->error['details'][$field][0]);
+        }
+    }
+
+    /**
+     * Call the api and assert that the response contains a object not found error.
+     *
+     * @param $parameters
+     */
+    protected function assertApiObjectNotFound($parameters = [])
+    {
+        $this->runApiCall($parameters);
+
+        $this->assertResponseStatus(400);
+        $this->assertEquals('Object not found', $this->error['message']);
+    }
+
+    /**
+     * Call the api and assert that the response contains a internal server error.
+     *
+     * @param $parameters
+     */
+    protected function assertApiInternalServerError($parameters = [])
+    {
+        $this->runApiCall($parameters);
+
+        $this->assertResponseStatus(500);
+    }
+
 }
