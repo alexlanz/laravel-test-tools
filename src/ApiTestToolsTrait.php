@@ -6,13 +6,11 @@ trait ApiTestToolsTrait {
 
     protected $apiUrl;
 
-    protected $content;
+    protected $apiData;
 
-    protected $info;
+    protected $apiInfo;
 
-    protected $data;
-
-    protected $error;
+    protected $apiError;
 
     /**
      * Call the given URI as a Api/Ajax call and return the Response.
@@ -44,36 +42,15 @@ trait ApiTestToolsTrait {
      * Call the api with the predefined method and url.
      *
      * @param array $parameters
+     * @param array $cookies
+     * @param array $files
+     * @param array $server
+     * @param null $content
      * @return \Illuminate\Http\Response
      */
-    protected function runApiCall($parameters = [])
+    protected function fireApiCall($parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
-        return $this->callApi($this->apiMethod, $this->apiUrl, $parameters);
-    }
-
-    /**
-     * Sets all available api variables based on the given content.
-     *
-     * @param string
-     */
-    protected function setupApiVariables($content)
-    {
-        $this->content = $content;
-
-        $this->data = json_decode($content, true);
-
-        if (is_array($this->data))
-        {
-            if (array_key_exists('info', $this->data))
-            {
-                $this->info = $this->data['info'];
-            }
-
-            if (array_key_exists('error', $this->data))
-            {
-                $this->error = $this->data['error'];
-            }
-        }
+        return $this->callApi($this->apiMethod, $this->apiUrl, $parameters, $cookies, $files, $server, $content);
     }
 
     /**
@@ -117,47 +94,59 @@ trait ApiTestToolsTrait {
     }
 
     /**
-     * Call the api and assert that the response contains a validation error with the given validation errors.
+     * Assert that the api response contains a validation error with the given validation errors.
      *
-     * @param $parameters
      * @param $errors
      */
-    protected function assertApiValidationFailed($parameters, $errors)
+    protected function assertApiResponseValidationFailed($errors)
     {
-        $this->runApiCall($parameters);
-
         $this->assertResponseStatus(400);
-        $this->assertEquals('Validation failed', $this->error['message']);
+        $this->assertEquals('Validation failed', $this->apiError['message']);
 
         foreach ($errors as $field => $message)
         {
-            $this->assertEquals($message, $this->error['details'][$field][0]);
+            $this->assertEquals($message, $this->apiError['details'][$field][0]);
         }
     }
 
     /**
-     * Call the api and assert that the response contains a object not found error.
-     *
-     * @param $parameters
+     * Assert that the api response contains a object not found error.
      */
-    protected function assertApiObjectNotFound($parameters = [])
+    protected function assertApiResponseObjectNotFound()
     {
-        $this->runApiCall($parameters);
-
         $this->assertResponseStatus(400);
-        $this->assertEquals('Object not found', $this->error['message']);
+        $this->assertEquals('Object not found', $this->apiError['message']);
     }
 
     /**
-     * Call the api and assert that the response contains a internal server error.
-     *
-     * @param $parameters
+     * Assert that the api response contains a internal server error.
      */
-    protected function assertApiInternalServerError($parameters = [])
+    protected function assertApiResponseInternalServerError()
     {
-        $this->runApiCall($parameters);
-
         $this->assertResponseStatus(500);
+    }
+
+    /**
+     * Sets all available api variables based on the given content.
+     *
+     * @param string
+     */
+    protected function setupApiVariables($content)
+    {
+        $this->apiData = json_decode($content, true);
+
+        if (is_array($this->apiData))
+        {
+            if (array_key_exists('info', $this->apiData))
+            {
+                $this->apiInfo = $this->apiData['info'];
+            }
+
+            if (array_key_exists('error', $this->apiData))
+            {
+                $this->apiError = $this->apiData['error'];
+            }
+        }
     }
 
 }
