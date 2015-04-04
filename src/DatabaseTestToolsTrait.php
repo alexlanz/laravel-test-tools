@@ -2,18 +2,24 @@
 
 trait DatabaseTestToolsTrait {
 
-    protected $db;
-
-
-    protected function setUpDatabaseTools()
+    /**
+     * Begin a new database transaction.
+     *
+     * @setUp
+     */
+    public function setUpDatabaseTools()
     {
-        $this->db = $this->app->make('db');
-        $this->db->beginTransaction();
+        $this->app['db']->beginTransaction();
     }
 
-    protected function tearDownDatabaseTools()
+    /**
+     * Rollback the transaction.
+     *
+     * @tearDown
+     */
+    public function tearDownDatabaseTools()
     {
-        $this->db->rollback();
+        $this->app['db']->rollback();
     }
 
 
@@ -47,7 +53,7 @@ trait DatabaseTestToolsTrait {
 
     private function createQueryForCheckOfRecordInDatabase($table, $criteria)
     {
-        $query = $this->db->table($table);
+        $query = $this->app['db']->table($table);
 
         foreach ($criteria as $column => $value) {
             $query = $query->where($column, $value);

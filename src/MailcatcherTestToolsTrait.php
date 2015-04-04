@@ -6,19 +6,21 @@ trait MailcatcherTestToolsTrait {
 
     protected $mailcatcher;
 
-
+    /**
+     * Setup connection to mailcatcher and clear all emails.
+     *
+     * @setUp
+     */
     protected function setUpMailcatcherTools()
     {
-        $this->setUpMailcatcher();
+        $this->setUpMailcatcherConnection();
         $this->clearEmails();
     }
 
-    protected function tearDownMailcatcherTools()
-    {
-
-    }
-
-    protected function setUpMailcatcher()
+    /**
+     * Setup the connection to mailcatcher.
+     */
+    protected function setUpMailcatcherConnection()
     {
         $config = $this->app->make('config');
 
