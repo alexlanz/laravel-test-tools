@@ -9,7 +9,7 @@ trait MailcatcherTestToolsTrait {
     /**
      * Setup connection to mailcatcher and clear all emails.
      *
-     * @setUp
+     * @before
      */
     protected function setUpMailcatcherTools()
     {

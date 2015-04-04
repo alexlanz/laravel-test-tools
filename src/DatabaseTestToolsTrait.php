@@ -5,7 +5,7 @@ trait DatabaseTestToolsTrait {
     /**
      * Begin a new database transaction.
      *
-     * @setUp
+     * @before
      */
     public function setUpDatabaseTools()
     {
@@ -15,7 +15,7 @@ trait DatabaseTestToolsTrait {
     /**
      * Rollback the transaction.
      *
-     * @tearDown
+     * @after
      */
     public function tearDownDatabaseTools()
     {
