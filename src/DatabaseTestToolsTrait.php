@@ -3,9 +3,9 @@
 trait DatabaseTestToolsTrait {
 
     /**
-     * Begin a new database transaction.
+     * Begin a new database transaction before each test.
      *
-     * @before
+     * @setUp
      */
     public function setUpDatabaseTools()
     {
@@ -13,9 +13,9 @@ trait DatabaseTestToolsTrait {
     }
 
     /**
-     * Rollback the transaction.
+     * Rollback the transaction after each test.
      *
-     * @after
+     * @tearDown
      */
     public function tearDownDatabaseTools()
     {
