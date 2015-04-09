@@ -9,7 +9,7 @@ trait AnnotationsTrait {
      *
      * @var AnnotationReader
      */
-    protected $annotations;
+    protected $annotationsReader;
 
     /**
      * Prepare the test for PHPUnit.
@@ -20,7 +20,7 @@ trait AnnotationsTrait {
     {
         parent::setUp();
 
-        $methods = $this->getAnnotations()->methodsHaving('setUp');
+        $methods = $this->methodsHavingAnnotation('setUp');
         $this->callMethods($methods);
     }
 
@@ -31,25 +31,33 @@ trait AnnotationsTrait {
      */
     public function tearDown()
     {
-        $methods = $this->getAnnotations()->methodsHaving('tearDown');
+        $methods = $this->methodsHavingAnnotation('tearDown');
         $this->callMethods($methods);
 
         parent::tearDown();
     }
 
     /**
-     * Get the annotation reader instance.
+     * Get the methods containing the given annotations.
      *
-     * @return AnnotationReader
+     * @param $annotation
+     * @return mixed
      */
-    public function getAnnotations()
+    public function methodsHavingAnnotation($annotation)
     {
-        if (! $this->annotations)
+        if (! isset($this->annotations))
         {
-            $this->annotations = new AnnotationReader($this);
+            $this->annotations = [];
         }
 
-        return $this->annotations;
+        if( ! isset($this->annotations[$annotation]))
+        {
+            $reader = AnnotationReader($this);
+
+            $this->annotations[$annotation] = $reader->methodsHaving($annotation);
+        }
+
+        return $this->annotations[$annotation];
     }
 
     /**
