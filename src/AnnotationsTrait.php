@@ -52,7 +52,7 @@ trait AnnotationsTrait {
 
         if( ! isset($this->annotations[$annotation]))
         {
-            $reader = AnnotationReader($this);
+            $reader = new AnnotationReader($this);
 
             $this->annotations[$annotation] = $reader->methodsHaving($annotation);
         }
