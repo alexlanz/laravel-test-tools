@@ -7,7 +7,7 @@ trait DatabaseTestToolsTrait {
      *
      * @setUp
      */
-    public function setUpDatabaseTools()
+    public function beginTransaction()
     {
         $this->app['db']->beginTransaction();
     }
@@ -17,45 +17,49 @@ trait DatabaseTestToolsTrait {
      *
      * @tearDown
      */
-    public function tearDownDatabaseTools()
+    public function rollbackTransaction()
     {
         $this->app['db']->rollback();
     }
 
 
-    protected function checkRecordInDatabase($table, array $criteria)
+    protected function verifyInDatabase($table, array $criteria)
     {
-        $this->countRecordInDatabase(1, $table, $criteria);
+        $this->assertRecordsInDatabase(1, $table, $criteria);
     }
 
-    protected function checkRecordNotInDatabase($table, array $criteria)
+    protected function verifyNotInDatabase($table, array $criteria)
     {
-        $this->countRecordInDatabase(0, $table, $criteria);
+        $this->assertRecordsInDatabase(0, $table, $criteria);
     }
 
-    protected function countRecordInDatabase($count, $table, array $criteria)
+    protected function assertRecordsInDatabase($count, $table, array $criteria = [])
     {
-        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
+        $query = $this->createDatabaseQuery($table, $criteria);
+
         $this->assertCount($count, $query->get());
     }
 
-    protected function getRecordsInDatabase($table, array $criteria)
+    protected function getDatabaseRecords($table, array $criteria = [])
     {
-        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
+        $query = $this->createDatabaseQuery($table, $criteria);
+
         return $query->get();
     }
 
-    protected function getFirstRecordInDatabase($table, array $criteria)
+    protected function getFirstDatabaseRecord($table, array $criteria = [])
     {
-        $query = $this->createQueryForCheckOfRecordInDatabase($table, $criteria);
+        $query = $this->createDatabaseQuery($table, $criteria);
+
         return $query->first();
     }
 
-    private function createQueryForCheckOfRecordInDatabase($table, $criteria)
+    private function createDatabaseQuery($table, $criteria)
     {
         $query = $this->app['db']->table($table);
 
-        foreach ($criteria as $column => $value) {
+        foreach ($criteria as $column => $value)
+        {
             $query = $query->where($column, $value);
         }
 

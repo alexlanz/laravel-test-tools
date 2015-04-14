@@ -2,7 +2,7 @@
 
 use Krumer\Test\Tools\Utils\AnnotationReader;
 
-trait AnnotationsTrait {
+trait AnnotationsTestToolsTrait {
 
     /**
      * The annotation reader instance.
@@ -45,7 +45,7 @@ trait AnnotationsTrait {
      */
     public function methodsHavingAnnotation($annotation)
     {
-        if (! isset($this->annotations))
+        if ( ! isset($this->annotations))
         {
             $this->annotations = [];
         }

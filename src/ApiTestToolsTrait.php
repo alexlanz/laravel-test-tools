@@ -2,10 +2,6 @@
 
 trait ApiTestToolsTrait {
 
-    protected $apiMethod;
-
-    protected $apiUrl;
-
     protected $apiData;
 
     protected $apiInfo;
@@ -38,59 +34,32 @@ trait ApiTestToolsTrait {
         return $response;
     }
 
-    /**
-     * Call the api with the predefined method and url.
-     *
-     * @param array $parameters
-     * @param array $cookies
-     * @param array $files
-     * @param array $server
-     * @param null $content
-     * @return \Illuminate\Http\Response
-     */
-    protected function fireApiCall($parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    protected function get($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
     {
-        return $this->callApi($this->apiMethod, $this->apiUrl, $parameters, $cookies, $files, $server, $content);
+        return $this->callApi('GET', $uri, $parameters, $cookies, $files, $server, $content);
+    }
+
+    protected function post($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    {
+        return $this->callApi('POST', $uri, $parameters, $cookies, $files, $server, $content);
+    }
+
+    protected function put($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    {
+        return $this->callApi('POST', $uri, $parameters, $cookies, $files, $server, $content);
+    }
+
+    protected function delete($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
+    {
+        return $this->callApi('DELETE', $uri, $parameters, $cookies, $files, $server, $content);
     }
 
     /**
-     * Set the url of the API.
-     *
-     * @param $apiUrl
+     * Assert that the api response contains a successful response.
      */
-    public function setApiUrl($apiUrl)
+    protected function assertSuccess()
     {
-        $this->apiUrl = $apiUrl;
-    }
-
-    /**
-     * Return the url of the API.
-     *
-     * @return mixed
-     */
-    public function getApiUrl()
-    {
-        return $this->apiUrl;
-    }
-
-    /**
-     * Set the method of the API.
-     *
-     * @param $apiMethod
-     */
-    protected function setApiMethod($apiMethod)
-    {
-        $this->apiMethod = $apiMethod;
-    }
-
-    /**
-     * Return the method of the API.
-     *
-     * @return mixed
-     */
-    protected function getApiMethod()
-    {
-        return $this->apiMethod;
+        $this->assertResponseStatus(200);
     }
 
     /**
@@ -98,7 +67,7 @@ trait ApiTestToolsTrait {
      *
      * @param $errors
      */
-    protected function assertApiResponseValidationFailed($errors)
+    protected function assertValidationFailed($errors)
     {
         $this->assertResponseStatus(400);
         $this->assertEquals('Validation failed', $this->apiError['message']);
@@ -112,7 +81,7 @@ trait ApiTestToolsTrait {
     /**
      * Assert that the api response contains a object not found error.
      */
-    protected function assertApiResponseObjectNotFound()
+    protected function assertObjectNotFound()
     {
         $this->assertResponseStatus(400);
         $this->assertEquals('Object not found', $this->apiError['message']);
@@ -121,7 +90,7 @@ trait ApiTestToolsTrait {
     /**
      * Assert that the api response contains a internal server error.
      */
-    protected function assertApiResponseInternalServerError()
+    protected function assertInternalServerError()
     {
         $this->assertResponseStatus(500);
     }
