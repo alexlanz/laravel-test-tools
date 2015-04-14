@@ -1,6 +1,10 @@
 <?php namespace Krumer\Test\Tools;
 
+use Krumer\Test\Tools\Dummy\Dummy;
+
 trait DatabaseTestToolsTrait {
+
+    protected $dummy;
 
     /**
      * Begin a new database transaction before each test.
@@ -20,6 +24,16 @@ trait DatabaseTestToolsTrait {
     public function rollbackTransaction()
     {
         $this->app['db']->rollback();
+    }
+
+    /**
+     * Sets up an instance of dummy.
+     *
+     * @setUp
+     */
+    public function setUpDummy()
+    {
+        $this->dummy = new Dummy();
     }
 
 
@@ -64,6 +78,16 @@ trait DatabaseTestToolsTrait {
         }
 
         return $query;
+    }
+
+    /**
+     * Fill and save an entity.
+     *
+     * @return mixed
+     */
+    protected function dummy()
+    {
+        return $this->dummy;
     }
 
 }
