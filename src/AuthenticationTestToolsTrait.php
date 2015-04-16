@@ -2,12 +2,6 @@
 
 trait AuthenticationTestToolsTrait {
 
-    protected function setUpAuthenticationTools($email = 'max@mustermann.it', $password = 'password')
-    {
-        $this->login($email, $password);
-    }
-
-
     /**
      * Log in as the given user with the given password.
      *
@@ -22,6 +16,24 @@ trait AuthenticationTestToolsTrait {
         ];
 
         $this->app['auth']->attempt($credentials);
+    }
+
+    /**
+     * Log out the current user.
+     */
+    public function logout()
+    {
+        $this->app['auth']->logout();
+    }
+
+    /**
+     * Return the currently authenticated user.
+     *
+     * @return mixed
+     */
+    public function getAuthenticatedUser()
+    {
+        return $this->app['auth']->user();
     }
 
 }

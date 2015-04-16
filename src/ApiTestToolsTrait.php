@@ -2,11 +2,74 @@
 
 trait ApiTestToolsTrait {
 
-    protected $apiData;
+    protected $uri = '';
 
-    protected $apiInfo;
+    protected $parameters = [];
 
-    protected $apiError;
+    protected $content;
+
+    protected $info;
+
+    protected $error;
+
+
+    /**
+     * Clear the previous parameters of the api call.
+     *
+     * @tearDown
+     */
+    protected function clear()
+    {
+        $this->uri = '';
+        $this->parameters = [];
+
+        unset($this->content);
+    }
+
+    /**
+     * Set the uri for the api call.
+     *
+     * @param $uri
+     */
+    protected function setUri($uri)
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * Append an additional part to the current uri.
+     *
+     * @param $part
+     */
+    protected function appendToUri($part)
+    {
+        $this->uri .= $part;
+    }
+
+    /**
+     * Set the parameters for the api call.
+     *
+     * @param array $overrides
+     * @return array
+     */
+    protected function setRequestParameters(array $overrides = [])
+    {
+        $defaults = $this->getDefaultRequestParameters();
+
+        $this->parameters = array_merge($defaults, $overrides);
+
+        return $this->parameters;
+    }
+
+    /**
+     * Return the default parameters for the tests.
+     *
+     * @return array
+     */
+    protected function getDefaultRequestParameters()
+    {
+        return [];
+    }
 
     /**
      * Call the given URI as a Api/Ajax call and return the Response.
@@ -29,93 +92,129 @@ trait ApiTestToolsTrait {
         $response = $this->call($method, $uri, $parameters, $cookies, $files, $server, $content);
 
         // Set variables
-        $this->setupApiVariables($response->getContent());
+        $this->decodeContent($response->getContent());
 
         return $response;
     }
 
-    protected function get($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        return $this->callApi('GET', $uri, $parameters, $cookies, $files, $server, $content);
-    }
-
-    protected function post($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        return $this->callApi('POST', $uri, $parameters, $cookies, $files, $server, $content);
-    }
-
-    protected function put($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        return $this->callApi('POST', $uri, $parameters, $cookies, $files, $server, $content);
-    }
-
-    protected function delete($uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
-    {
-        return $this->callApi('DELETE', $uri, $parameters, $cookies, $files, $server, $content);
-    }
-
     /**
-     * Assert that the api response contains a successful response.
-     */
-    protected function assertSuccess()
-    {
-        $this->assertResponseStatus(200);
-    }
-
-    /**
-     * Assert that the api response contains a validation error with the given validation errors.
+     * Decode the content and set all variables.
      *
-     * @param $errors
+     * @param $content
      */
-    protected function assertValidationFailed($errors)
+    private function decodeContent($content)
+    {
+        $this->content = json_decode($content, true);
+
+        if (is_array($this->content))
+        {
+            if (array_key_exists('info', $this->content))
+            {
+                $this->info = $this->content['info'];
+            }
+
+            if (array_key_exists('error', $this->content))
+            {
+                $this->error = $this->content['error'];
+            }
+        }
+    }
+
+    /**
+     * Run a get request with the set settings.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function get()
+    {
+        return $this->callApi('GET', $this->uri, $this->parameters);
+    }
+
+    /**
+     * Run a post request with the set settings.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function post()
+    {
+        return $this->callApi('POST', $this->uri, $this->parameters);
+    }
+
+    /**
+     * Run a put request with the set settings.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function put()
+    {
+        return $this->callApi('PUT', $this->uri, $this->parameters);
+    }
+
+    /**
+     * Run a delete request with the set settings.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected function delete()
+    {
+        return $this->callApi('DELETE', $this->uri, $this->parameters);
+    }
+
+
+    /**
+     * Assert that the api response contains a validation error.
+     */
+    protected function assertResponseValidationFailed()
     {
         $this->assertResponseStatus(400);
-        $this->assertEquals('Validation failed', $this->apiError['message']);
-
-        foreach ($errors as $field => $message)
-        {
-            $this->assertEquals($message, $this->apiError['details'][$field][0]);
-        }
+        $this->assertEquals('Validation failed', $this->error['message']);
     }
 
     /**
      * Assert that the api response contains a object not found error.
      */
-    protected function assertObjectNotFound()
+    protected function assertResponseObjectNotFound()
     {
         $this->assertResponseStatus(400);
-        $this->assertEquals('Object not found', $this->apiError['message']);
+        $this->assertEquals('Object not found', $this->error['message']);
+    }
+
+    /**
+     * Assert that the api response contains an unauthorized error.
+     */
+    protected function assertResponseUnauthorized()
+    {
+        $this->assertResponseStatus(401);
     }
 
     /**
      * Assert that the api response contains a internal server error.
      */
-    protected function assertInternalServerError()
+    protected function assertResponseInternalServerError()
     {
         $this->assertResponseStatus(500);
     }
 
     /**
-     * Sets all available api variables based on the given content.
+     * Assert that the content has a field with the given value.
      *
-     * @param string
+     * @param $field
+     * @param $value
      */
-    protected function setupApiVariables($content)
+    protected function assertContentHas($field, $value)
     {
-        $this->apiData = json_decode($content, true);
+        $this->assertEquals($value, $this->content[$field]);
+    }
 
-        if (is_array($this->apiData))
-        {
-            if (array_key_exists('info', $this->apiData))
-            {
-                $this->apiInfo = $this->apiData['info'];
-            }
-
-            if (array_key_exists('error', $this->apiData))
-            {
-                $this->apiError = $this->apiData['error'];
-            }
-        }
+    /**
+     * Assert that the validation errors contain a given message for the specified field.
+     *
+     * @param $field
+     * @param $message
+     */
+    protected function assertValidationErrorsHave($field, $message)
+    {
+        $this->assertContains($message, $this->error['details'][$field]);
     }
 
 }
