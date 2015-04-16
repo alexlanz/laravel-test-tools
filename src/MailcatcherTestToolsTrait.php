@@ -14,7 +14,7 @@ trait MailcatcherTestToolsTrait {
     protected function connectToMailcatcher()
     {
         $this->setUpMailcatcherConnection();
-        
+
         $this->clearEmails();
     }
 
