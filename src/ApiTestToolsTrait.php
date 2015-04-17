@@ -1,5 +1,7 @@
 <?php namespace Krumer\Test\Tools;
 
+use Krumer\Test\Tools\Utils\ContentSearch;
+
 trait ApiTestToolsTrait {
 
     protected $uri = '';
@@ -203,7 +205,20 @@ trait ApiTestToolsTrait {
      */
     protected function assertContentHas($field, $value)
     {
-        $this->assertEquals($value, $this->content[$field]);
+        $fields = ContentSearch::findSearchFields($field, $this->content);
+
+        $found = false;
+
+        foreach ($fields as $field)
+        {
+            if ($value == $field)
+            {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found);
     }
 
     /**

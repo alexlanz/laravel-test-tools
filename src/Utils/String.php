@@ -1,6 +1,6 @@
 <?php namespace Krumer\Test\Tools\Utils;
 
-class Str {
+class String {
 
     /**
      * Determine if a string is contained within another string.

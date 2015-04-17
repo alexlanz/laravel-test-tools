@@ -63,7 +63,7 @@ class AnnotationReader
      */
     protected function hasAnnotation($annotation, \ReflectionMethod $method)
     {
-        return Str::contains($method->getDocComment(), "@{$annotation}");
+        return String::contains($method->getDocComment(), "@{$annotation}");
     }
 
 }
