@@ -49,6 +49,22 @@ trait ApiTestToolsTrait {
     }
 
     /**
+     * Append an additional part to the current uri.
+     *
+     * @param $part
+     */
+    protected function appendToUri($part)
+    {
+
+        if (substr($this->uri, -1) !== '/')
+        {
+            $this->uri .= '/';
+        }
+
+        $this->uri .= $part;
+    }
+
+    /**
      * Set the parameters for the api call.
      *
      * @param array $overrides
