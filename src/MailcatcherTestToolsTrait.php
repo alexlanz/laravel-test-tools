@@ -187,7 +187,9 @@ trait MailcatcherTestToolsTrait {
      */
     protected function seeInEmail($email, $expected)
     {
-        $this->assertContains($expected, $email['source'], "Email Contains");
+        $source = quoted_printable_decode($email['source']);
+
+        $this->assertContains($expected, $source, "Email Contains");
     }
 
     /**
@@ -199,9 +201,11 @@ trait MailcatcherTestToolsTrait {
      */
     protected function grabMatchesFromEmail($email, $regex)
     {
-        $source = utf8_encode(quoted_printable_decode($email['source']));
+        $source = quoted_printable_decode($email['source']);
+
         preg_match($regex, $source, $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
+        
         return $matches;
     }
 
